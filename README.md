@@ -1,18 +1,25 @@
 ```
-  ██████╗  ██████╗ ██████╗  ██████╗ ████████╗     █████╗  ██████╗ ███████╗███╗   ██╗████████╗
- ██╔════╝ ██╔═══██╗██╔══██╗██╔═══██╗╚══██╔══╝    ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝
- ██║  ███╗██║   ██║██║  ██║██║   ██║   ██║       ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║
- ██║   ██║██║   ██║██║  ██║██║   ██║   ██║       ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║
- ╚██████╔╝╚██████╔╝██████╔╝╚██████╔╝   ██║       ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║
-  ╚═════╝  ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝       ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝
+ ███████╗ █████╗ ██████╗ ██████╗ ██╗  ██╗██╗██████╗ ███████╗    ██████╗ ███████╗███████╗
+ ██╔════╝██╔══██╗██╔══██╗██╔══██╗██║  ██║██║██╔══██╗██╔════╝    ██╔══██╗██╔════╝██╔════╝
+ ███████╗███████║██████╔╝██████╔╝███████║██║██████╔╝█████╗      ██████╔╝█████╗  █████╗
+ ╚════██║██╔══██║██╔═══╝ ██╔═══╝ ██╔══██║██║██╔══██╗██╔══╝      ██╔══██╗██╔══╝  ██╔══╝
+ ███████║██║  ██║██║     ██║     ██║  ██║██║██║  ██║███████╗    ██████╔╝███████╗███████╗
+ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝     ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝    ╚═════╝ ╚══════╝╚══════╝
 ```
 
-# Claude-Godot Sandbox
+# Sapphire Bee Sandbox
 
-[![CI](https://github.com/SapphireBeehiveStudios/godot-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/SapphireBeehiveStudios/godot-agent/actions/workflows/ci.yml)
-[![Build and Push](https://github.com/SapphireBeehiveStudios/godot-agent/actions/workflows/build-and-push.yml/badge.svg)](https://github.com/SapphireBeehiveStudios/godot-agent/actions/workflows/build-and-push.yml)
+[![CI](https://github.com/SapphireBeehiveStudios/sapphire-bee/actions/workflows/ci.yml/badge.svg)](https://github.com/SapphireBeehiveStudios/sapphire-bee/actions/workflows/ci.yml)
+[![Build and Push](https://github.com/SapphireBeehiveStudios/sapphire-bee/actions/workflows/build-and-push.yml/badge.svg)](https://github.com/SapphireBeehiveStudios/sapphire-bee/actions/workflows/build-and-push.yml)
 
-A secure, sandboxed environment for running Claude Code with Godot game development projects on Apple Silicon Macs.
+A secure, sandboxed environment for running Claude Code with development projects. Run Claude in isolated containers with network allowlisting, filesystem isolation, and security hardening.
+
+**Key Features:**
+- **Worker Pool Mode** - Run multiple autonomous agents processing GitHub issues in parallel
+- **Build Tools** - Pre-installed Go, Python, Node.js, and build essentials
+- **Package Manager Access** - Allowlisted network access to golang.org, pypi.org, npm registry
+- **Network Isolation** - DNS-based allowlisting with nginx stream proxies
+- **Multiple Operating Modes** - Persistent, isolated, pool, queue, and one-shot modes
 
 ## Architecture
 
@@ -20,15 +27,15 @@ A secure, sandboxed environment for running Claude Code with Godot game developm
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              HOST (Trusted)                                 │
 │  ┌──────────────┐  ┌──────────────────────────────────────────────────────┐ │
-│  │ Godot Editor │  │              Docker Desktop                          │ │
+│  │  Your IDE    │  │              Docker Desktop                          │ │
 │  │   (macOS)    │  │  ┌─────────────────────────────────────────────────┐ │ │
 │  │              │  │  │              egress_net (Internet)              │ │ │
 │  └──────────────┘  │  │    ┌────────────────────────────────────────┐   │ │ │
 │         │          │  │    │            PROXY LAYER                 │   │ │ │
 │         │          │  │    │  ┌─────────┐ ┌─────────┐ ┌──────────┐  │   │ │ │
 │         │          │  │    │  │ proxy_  │ │ proxy_  │ │ proxy_   │  │   │ │ │
-│         │          │  │    │  │ github  │ │ godot   │ │anthropic │  │   │ │ │
-│         │          │  │    │  │         │ │ _docs   │ │ _api     │  │   │ │ │
+│         │          │  │    │  │ github  │ │ raw_    │ │anthropic │  │   │ │ │
+│         │          │  │    │  │         │ │ github  │ │ _api     │  │   │ │ │
 │         │          │  │    │  └────┬────┘ └────┬────┘ └────┬─────┘  │   │ │ │
 │         │          │  │    └───────┼──────────┼────────────┼────────┘   │ │ │
 │         │          │  └────────────┼──────────┼────────────┼────────────┘ │ │
@@ -36,15 +43,15 @@ A secure, sandboxed environment for running Claude Code with Godot game developm
 │         │          │  │  sandbox_net (Internal, No Internet)            │ │ │
 │         │          │  │    ┌───────┴──────────┴────────────┴───────┐    │ │ │
 │         │          │  │    │             AGENT CONTAINER           │    │ │ │
-│         │          │  │    │  ┌──────────────┐  ┌───────────────┐  │    │ │ │
-│         │          │  │    │  │ Claude Code  │  │ Godot Headless│  │    │ │ │
-│         │          │  │    │  │     CLI      │  │    Runtime    │  │    │ │ │
-│  ┌──────┴───────┐  │  │    │  └──────────────┘  └───────────────┘  │    │ │ │
+│         │          │  │    │  ┌──────────────┐                     │    │ │ │
+│         │          │  │    │  │ Claude Code  │                     │    │ │ │
+│         │          │  │    │  │     CLI      │                     │    │ │ │
+│  ┌──────┴───────┐  │  │    │  └──────────────┘                     │    │ │ │
 │  │   /project   │◄─┼──┼────┼───────────┐                           │    │ │ │
-│  │ (Godot proj) │  │  │    │           │  /project (mount)         │    │ │ │
+│  │ (Your code)  │  │  │    │           │  /project (mount)         │    │ │ │
 │  └──────────────┘  │  │    └───────────┴───────────────────────────┘    │ │ │
 │                    │  │                        │                        │ │ │
-│  Trust Boundary ═══╪══╪═════════════════════════════════════════════════╪ │ │ 
+│  Trust Boundary ═══╪══╪═════════════════════════════════════════════════╪ │ │
 │       ▼            │  │    ┌───────────────────┴───────────────────┐    │ │ │
 │                    │  │    │              dnsfilter                │    │ │ │
 │                    │  │    │              (CoreDNS)                │    │ │ │
@@ -59,8 +66,9 @@ A secure, sandboxed environment for running Claude Code with Godot game developm
                           ┌───────────────────────┐
                           │   INTERNET (Untrusted)│
                           │  - GitHub             │
-                          │  - Godot Docs         │
                           │  - Anthropic API      │
+                          │  - golang.org         │
+                          │  - pypi.org           │
                           └───────────────────────┘
 ```
 
@@ -68,11 +76,79 @@ A secure, sandboxed environment for running Claude Code with Godot game developm
 
 | Zone | Trust Level | Access |
 |------|-------------|--------|
-| Host | Trusted | Full system access, Godot Editor |
+| Host | Trusted | Full system access |
 | Agent Container | Untrusted | Sandboxed, only /project mount |
 | Proxies | Semi-trusted | Bridge between sandbox and internet |
 | DNS Filter | Semi-trusted | Controls network access |
 | Internet | Untrusted | Allowlisted domains only |
+
+## Build Tools & Development Environment
+
+The agent container includes a comprehensive development environment for working with multiple languages and frameworks.
+
+### Installed Tools
+
+| Category | Tools | Version |
+|----------|-------|---------|
+| **Languages** | Node.js, Python 3, Go | Latest from Debian repos |
+| **Package Managers** | npm, pip, uv, go mod | Latest |
+| **Build Tools** | make, gcc, g++, git | Latest |
+| **Utilities** | curl, jq, zip, unzip, file, gh CLI | Latest |
+| **Code Quality** | pre-commit, black, ruff, detect-secrets | Latest via uv |
+
+### Network Access for Package Managers
+
+The sandbox provides allowlisted network access to these package repositories:
+
+| Domain | Purpose | Proxy IP |
+|--------|---------|----------|
+| `api.github.com` | GitHub API (issues, PRs, releases) | 10.100.1.10 |
+| `raw.githubusercontent.com` | Raw file content | 10.100.1.11 |
+| `codeload.github.com` | Repository archives | 10.100.1.12 |
+| `api.anthropic.com` | Claude API | 10.100.1.14 |
+| `proxy.golang.org` | Go module proxy | 10.100.1.20 |
+| `sum.golang.org` | Go checksum database | 10.100.1.21 |
+| `pypi.org` | Python package index | 10.100.1.22 |
+| `files.pythonhosted.org` | Python package files | 10.100.1.23 |
+
+### Usage Examples
+
+**Go Projects:**
+```bash
+# Inside the container
+cd /project/your-go-service
+go mod download
+go build
+go test ./...
+```
+
+**Python Projects:**
+```bash
+# Using venv (recommended due to PEP 668)
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pytest
+
+# Using uv (faster)
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+**Node.js Projects:**
+```bash
+npm install
+npm test
+npm run build
+```
+
+**Pre-commit Hooks:**
+```bash
+# Install and run pre-commit hooks
+pre-commit install
+pre-commit run --all-files
+```
 
 ## Prerequisites
 
@@ -111,8 +187,8 @@ If you experience file sync issues, try adding your project directory to Docker 
 
 ```bash
 # 1. Clone this repository
-git clone https://github.com/SapphireBeehiveStudios/godot-agent.git
-cd godot-agent
+git clone https://github.com/SapphireBeehiveStudios/sapphire-bee.git
+cd sapphire-bee
 
 # 2. Set up authentication (choose one method)
 cp .env.example .env
@@ -127,11 +203,15 @@ claude setup-token
 # 3. Run health check
 make doctor
 
-# 4. Build the agent image
-make build
+# 4. Get the agent image (recommended: use pre-built)
+docker pull ghcr.io/sapphirebeehivestudios/sapphire-bee:latest
+docker tag ghcr.io/sapphirebeehivestudios/sapphire-bee:latest sapphire-bee:latest
+
+# 4a. Alternative: Build locally (only if modifying the Dockerfile)
+# make build
 
 # 5. Start persistent agent (recommended)
-make up-agent PROJECT=/path/to/your/godot/project
+make up-agent PROJECT=/path/to/your/project
 
 # 6. Run Claude commands
 make claude                        # Interactive session
@@ -148,7 +228,7 @@ For ephemeral sessions that don't persist:
 
 ```bash
 make up                                           # Start infrastructure
-make run-direct PROJECT=/path/to/your/godot/project  # One-shot session
+make run-direct PROJECT=/path/to/your/project     # One-shot session
 ```
 
 ## Authentication
@@ -207,10 +287,10 @@ make github-app-test
 ```
 
 **Benefits:**
-- ✅ Tokens auto-expire in 1 hour (no cleanup needed)
-- ✅ Fine-grained per-repository access
-- ✅ Audit logs show "github-app/your-app" (not your username)
-- ✅ Higher API rate limits
+- Tokens auto-expire in 1 hour (no cleanup needed)
+- Fine-grained per-repository access
+- Audit logs show "github-app/your-app" (not your username)
+- Higher API rate limits
 
 #### Option B: Personal Access Token (Legacy)
 
@@ -242,9 +322,9 @@ echo 'GITHUB_PAT=github_pat_...' >> .env
 #### Common Features (Both Options)
 
 **Branch Protection (built-in):**
-- ⛔ Direct pushes to `main`/`master` branches are **blocked**
-- ✅ Repos are cloned to a `claude/work-*` branch automatically
-- ✅ Force pushes and remote branch deletions are disabled
+- Direct pushes to `main`/`master` branches are **blocked**
+- Repos are cloned to a `claude/work-*` branch automatically
+- Force pushes and remote branch deletions are disabled
 - Changes must be merged via pull request (`gh pr create`)
 
 **Usage:**
@@ -286,7 +366,7 @@ The Makefile is for **you (the human)** to run on your Mac — it manages the sa
 │                                                         │
 │   You run:  make build                                  │
 │             make up                                     │
-│             make run-direct PROJECT=~/my-game           │
+│             make run-direct PROJECT=~/my-project        │
 │                        │                                │
 │                        ▼                                │
 │            ┌───────────────────────┐                    │
@@ -299,7 +379,7 @@ The Makefile is for **you (the human)** to run on your Mac — it manages the sa
 │            │    Docker Desktop     │                    │
 │            │  ┌─────────────────┐  │                    │
 │            │  │ Agent Container │  │ ← Claude runs here │
-│            │  │ (Godot + Claude)│  │                    │
+│            │  │    (Claude)     │  │                    │
 │            │  └─────────────────┘  │                    │
 │            └───────────────────────┘                    │
 └─────────────────────────────────────────────────────────┘
@@ -324,6 +404,14 @@ You can use either `make` targets or scripts directly:
 | `make up-isolated REPO=...` | Start isolated agent (clones repo) |
 | `make up-isolated REPO=... BRANCH=...` | Start with specific branch |
 | `make down-isolated` | Stop agent and destroy workspace |
+| **Pool Mode** | |
+| `make pool-start REPO=... WORKERS=...` | Start worker pool |
+| `make pool-status` | Show all workers status |
+| `make pool-logs` | Follow all worker logs |
+| `make pool-logs-worker WORKER=...` | Follow specific worker logs |
+| `make pool-add-workers COUNT=...` | Add workers without interrupting pool |
+| `make pool-cleanup-claims REPO=...` | Clean stale claim comments |
+| `make pool-stop` | Stop all workers |
 | **Queue Mode** | |
 | `make queue-start PROJECT=...` | Start async queue processor |
 | `make queue-add TASK="..." NAME=...` | Add task to queue |
@@ -370,15 +458,15 @@ Persistent mode keeps the agent container running, allowing you to:
 
 ```bash
 # Start your work session
-make up-agent PROJECT=~/my-godot-game
+make up-agent PROJECT=~/my-project
 
 # Throughout the day, run Claude commands instantly
 make claude P="What files are in this project?"
-make claude P="Add a jump mechanic to player.gd"
-make claude P="Fix the collision detection bug"
+make claude P="Add a new feature to the main module"
+make claude P="Fix the bug in helper.py"
 
 # For automation/scripts, use print mode (no interactive prompts)
-make claude-print P="List all scene files"
+make claude-print P="List all Python files"
 
 # For longer conversations, use interactive mode
 make claude
@@ -494,7 +582,7 @@ Pool mode runs multiple isolated agents in parallel, each processing GitHub issu
 
 ```bash
 # Start a pool of 3 workers
-make pool-start REPO=myorg/my-godot-game WORKERS=3
+make pool-start REPO=myorg/my-project WORKERS=3
 
 # Check worker status
 make pool-status
@@ -502,8 +590,14 @@ make pool-status
 # Watch logs from all workers
 make pool-logs
 
-# Scale up to 5 workers
-make pool-scale WORKERS=5
+# Watch a specific worker's logs
+make pool-logs-worker WORKER=worker-1
+
+# Add more workers without interrupting existing ones
+make pool-add-workers COUNT=2
+
+# Clean up stale claim comments (if workers crashed)
+make pool-cleanup-claims REPO=myorg/my-project
 
 # Stop all workers
 make pool-stop
@@ -513,9 +607,35 @@ make pool-stop
 
 1. **Workers start** - Each worker clones the repository into its own isolated Docker volume
 2. **Issue polling** - Workers poll GitHub for issues labeled `agent-ready` (configurable)
-3. **Claim & work** - Worker claims an issue by adding `in-progress` label, creates a branch, runs Claude
-4. **Open PR** - When done, worker pushes branch and opens a PR referencing the issue
-5. **Next issue** - Worker returns to base branch and polls for more issues
+3. **Claim & work** - Worker claims an issue by:
+   - Adding an `in-progress` label
+   - Posting a CLAIM comment with worker ID
+   - Creating a branch (or checking out existing PR branch if issue has a failing PR)
+4. **Execute work** - Worker runs Claude Code to implement the solution
+5. **Open/Update PR** - Worker pushes changes and opens a new PR or updates existing one
+6. **Next issue** - Worker removes `in-progress` label, adds `agent-complete`, polls for next issue
+
+### Key Features
+
+**Atomic Claiming:**
+- Workers use GitHub's timestamp-based sorting to prevent race conditions
+- Stale claims (>5 minutes old) are automatically ignored
+- Claim comments prevent duplicate work
+
+**PR Branch Fixing:**
+- If an issue already has an open PR with failing CI, workers check out that branch
+- Workers fix the failing tests/issues instead of creating duplicate PRs
+- Updates existing PR with new commits
+
+**Non-Disruptive Scaling:**
+- Add workers to running pool without interrupting active workers
+- Uses `docker run` instead of `docker compose --scale` to avoid recreation
+- New workers join immediately and start claiming issues
+
+**File-Based Logging:**
+- Each worker conversation logged to `pool-logs/worker-<id>_<timestamp>.log`
+- Easy to review what each worker did for debugging and auditing
+- Centralized log directory shared across all workers
 
 ### Required Labels
 
@@ -532,10 +652,39 @@ Create these labels in your GitHub repository:
 
 ```bash
 # Environment variables (in .env or exported)
-GITHUB_REPO=myorg/my-godot-game        # Repository to work on
+GITHUB_REPO=myorg/my-project           # Repository to work on
 ISSUE_LABEL=agent-ready                # Label to filter issues (default)
 POLL_INTERVAL=60                       # Seconds between issue checks
 WORKERS=3                              # Number of parallel workers
+
+# Optional debugging flags
+CLAUDE_DEBUG=1                         # Enable Claude Code debug output
+GITHUB_DEBUG=1                         # Enable GitHub API debug output
+POOL_DEBUG=1                           # Enable worker pool debug output
+```
+
+### Logging
+
+All worker conversations are logged to the `pool-logs/` directory:
+
+```
+pool-logs/
+├── worker-abc123_20250111_143022.log  # Worker abc123's conversation
+├── worker-def456_20250111_143045.log  # Worker def456's conversation
+└── ...
+```
+
+**Viewing logs:**
+```bash
+# Watch all workers
+make pool-logs
+
+# Watch specific worker
+make pool-logs-worker WORKER=worker-1
+
+# View completed logs
+ls -lh pool-logs/
+tail -f pool-logs/worker-abc123_*.log
 ```
 
 ### Example Workflow
@@ -565,20 +714,20 @@ Queue mode lets you add tasks to a directory and have Claude process them automa
 
 ```bash
 # Start the queue processor
-make queue-start PROJECT=~/my-godot-game
+make queue-start PROJECT=~/my-project
 
 # Add tasks (multiple methods)
-make queue-add TASK="Add player movement" NAME=001-movement PROJECT=~/my-godot-game
-echo "Fix collision detection" > ~/my-godot-game/.claude/queue/002-collision.md
+make queue-add TASK="Add feature X" NAME=001-feature PROJECT=~/my-project
+echo "Fix bug Y" > ~/my-project/.claude/queue/002-bugfix.md
 
 # Check status
-make queue-status PROJECT=~/my-godot-game
+make queue-status PROJECT=~/my-project
 
 # View logs
 make queue-logs
 
 # View results
-cat ~/my-godot-game/.claude/results/001-movement.log
+cat ~/my-project/.claude/results/001-feature.log
 
 # Stop when done
 make queue-stop
@@ -600,20 +749,20 @@ make queue-stop
 Simple text or markdown:
 
 ```markdown
-# Add Player Movement
+# Add New Feature
 
-Create a player.gd script with:
-- WASD movement controls
-- Gravity and jumping
-- Collision detection
+Create a helper module with:
+- Utility functions
+- Error handling
+- Unit tests
 
-Attach it to the player scene.
+Integrate it with the main module.
 ```
 
 Tasks are processed in alphabetical order. Use numeric prefixes for ordering:
 - `001-setup.md`
-- `002-player.md`
-- `003-enemies.md`
+- `002-feature.md`
+- `003-tests.md`
 
 ## Running Modes (One-shot)
 
@@ -629,13 +778,11 @@ Agent writes directly to your project directory:
 
 **Risks:**
 - Agent can delete/overwrite project files immediately
-- Agent could plant malicious scripts or assets
-- Godot Editor running on host could execute modified game scripts
+- Agent could plant malicious scripts
 
 **Mitigations:**
 - Use git to track changes and review diffs
 - Run `./scripts/scan-dangerous.sh` to detect suspicious patterns
-- Don't run Godot Editor while Claude is modifying files
 
 ### Staging Mode (Safer)
 
@@ -643,16 +790,16 @@ Agent writes to a separate staging directory:
 
 ```bash
 # Create staging directory
-mkdir -p ~/godot-staging
+mkdir -p ~/staging
 
 # Run Claude in staging mode
-./scripts/run-claude.sh staging ~/godot-staging
+./scripts/run-claude.sh staging ~/staging
 
 # Review changes
-./scripts/diff-review.sh ~/godot-staging /path/to/live/project
+./scripts/diff-review.sh ~/staging /path/to/live/project
 
 # Promote after review
-./scripts/promote.sh ~/godot-staging /path/to/live/project
+./scripts/promote.sh ~/staging /path/to/live/project
 ```
 
 ### Offline Mode (Maximum Isolation)
@@ -667,24 +814,6 @@ Use this for:
 - Reviewing suspicious code
 - Testing without API access
 - Maximum security when needed
-
-## Godot Operations
-
-Run Godot headless commands inside the sandbox:
-
-```bash
-# Check version
-./scripts/run-godot.sh /path/to/project --version
-
-# Run a test script
-./scripts/run-godot.sh /path/to/project -s res://tests/run.gd
-
-# Validate project
-./scripts/run-godot.sh /path/to/project --validate-project
-
-# Export project
-./scripts/run-godot.sh /path/to/project --export-release "Linux" build/game.x86_64
-```
 
 ## Security Tests
 
@@ -758,6 +887,7 @@ docker compose -f compose/compose.base.yml logs -f dnsfilter
 | dnsfilter | All DNS queries (allowed + blocked) |
 | proxy_* | Connection attempts, bytes transferred, timing |
 | agent | Session logs in `./logs/` directory |
+| worker pool | Worker conversations in `./pool-logs/` directory |
 
 ## Threat Model
 
@@ -786,7 +916,7 @@ This approach means Claude can work autonomously without permission prompts, whi
 
 ### What This Does NOT Protect Against
 
-1. **Malicious code in project**: If Claude writes malicious GDScript, the Godot Editor on host could execute it
+1. **Malicious code in project**: If Claude writes malicious code, you could execute it
 2. **Container/VM escapes**: Theoretical exploits in Docker/containerd
 3. **Social engineering**: Claude could try to convince you to bypass protections
 4. **Prompt injection**: Malicious content in project files could influence Claude
@@ -802,7 +932,7 @@ DNS Query → dnsfilter (CoreDNS)
     ├─ github.com? → Returns 10.100.1.10 (proxy_github IP)
     │
     └─ evil.com? → Returns NXDOMAIN (blocked)
-    
+
 Agent connects to 10.100.1.10:443
     │
     ▼
@@ -828,17 +958,17 @@ This repository includes GitHub Actions that automatically build and push images
 
 ```bash
 # Pull the latest image (multi-arch: works on both arm64 and amd64)
-docker pull ghcr.io/sapphirebeehivestudios/claude-godot-agent:latest
+docker pull ghcr.io/sapphirebeehivestudios/sapphire-bee:latest
 
 # Or pull a specific version
-docker pull ghcr.io/sapphirebeehivestudios/claude-godot-agent:godot-4.6
+docker pull ghcr.io/sapphirebeehivestudios/sapphire-bee:claude-2.0.76
 ```
 
 To use the pre-built image instead of building locally, update your `.env`:
 
 ```bash
 # Use pre-built image from GHCR
-AGENT_IMAGE=ghcr.io/sapphirebeehivestudios/claude-godot-agent:latest
+AGENT_IMAGE=ghcr.io/sapphirebeehivestudios/sapphire-bee:latest
 ```
 
 ### GitHub Actions Setup
@@ -847,7 +977,7 @@ The repository includes two workflows:
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `ci.yml` | PRs, pushes | Validates compose, lints scripts, test builds, 95 security tests |
+| `ci.yml` | PRs, pushes | Validates compose, lints scripts, test builds, security tests |
 | `build-and-push.yml` | Merge to main | Builds multi-arch image, pushes to GHCR |
 
 #### Required Setup
@@ -868,12 +998,11 @@ Create a `production` environment for the build-and-push workflow. Optionally ad
 
 #### Manual Build Trigger
 
-You can manually trigger a build with custom Godot version:
+You can manually trigger a build:
 
 1. Go to Actions → "Build and Push Docker Image"
 2. Click "Run workflow"
-3. Enter Godot version (e.g., `4.4`)
-4. Run
+3. Run
 
 ### Running in CI/CD
 
@@ -882,40 +1011,40 @@ Use the pre-built image in your own workflows:
 ```yaml
 # GitHub Actions example
 jobs:
-  godot-check:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Run Godot validation
+
+      - name: Run Claude in sandbox
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/project \
-            ghcr.io/sapphirebeehivestudios/claude-godot-agent:latest \
-            godot --headless --validate-project
+            ghcr.io/sapphirebeehivestudios/sapphire-bee:latest \
+            claude --version
 ```
 
 Or build locally in CI:
 
 ```yaml
 jobs:
-  godot-check:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Build agent
-        run: docker build -t claude-godot-agent:latest ./image
-      - name: Run Godot validation
+        run: docker build -t sapphire-bee:latest ./image
+      - name: Run Claude
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/project \
-            claude-godot-agent:latest \
-            godot --headless --validate-project
+            sapphire-bee:latest \
+            claude --version
 ```
 
 ### Multi-Architecture Builds
 
-The GitHub Action builds for both architectures automatically with automatic checksum verification:
+The GitHub Action builds for both architectures automatically:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -928,35 +1057,8 @@ The GitHub Action builds for both architectures automatically with automatic che
    ┌─────────────────┐                 ┌─────────────────┐
    │  linux/amd64    │                 │  linux/arm64    │
    │  (x86_64)       │                 │  (Apple Silicon)│
-   └────────┬────────┘                 └────────┬────────┘
-            │                                   │
-            ▼                                   ▼
-   ┌─────────────────┐                 ┌─────────────────┐
-   │ fetch_godot.sh  │                 │ fetch_godot.sh  │
-   │ detects x86_64  │                 │ detects arm64   │
-   └────────┬────────┘                 └────────┬────────┘
-            │                                   │
-            ▼                                   ▼
-   ┌─────────────────────────────────────────────────────┐
-   │         Downloads SHA512-SUMS.txt (same file)       │
-   │  Contains official checksums for ALL architectures  │
-   └─────────────────────────────────────────────────────┘
-            │                                   │
-            ▼                                   ▼
-   ┌─────────────────┐                 ┌─────────────────┐
-   │ Downloads:      │                 │ Downloads:      │
-   │ ...x86_64.zip   │                 │ ...arm64.zip    │
-   │ Auto-verifies   │                 │ Auto-verifies   │
-   │ with SHA512     │                 │ with SHA512     │
    └─────────────────┘                 └─────────────────┘
 ```
-
-**How it works:**
-1. Docker buildx runs parallel builds for each architecture
-2. Each container detects its own architecture via `uname -m`
-3. Downloads the correct arch-specific Godot binary
-4. Fetches Godot's official `SHA512-SUMS.txt` from the release
-5. Automatically extracts and verifies the correct checksum
 
 For manual multi-arch builds:
 
@@ -967,7 +1069,7 @@ docker buildx create --name multiarch --use
 # Build for multiple platforms
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t claude-godot-agent:latest \
+  -t sapphire-bee:latest \
   --push \
   ./image
 ```
@@ -1011,14 +1113,13 @@ chmod +x scripts/*.sh
 
 1. **Slow file sync**: Enable VirtioFS in Docker Desktop settings
 2. **High memory usage**: Adjust `AGENT_MEMORY_LIMIT` in `.env`
-3. **Slow Godot**: Native arm64 Godot builds (when available) will be faster than x86_64 emulation
 
 ## Development
 
 ### Project Structure
 
 ```
-godot-agent/
+sapphire-bee/
 ├── .github/
 │   └── workflows/
 │       ├── build-and-push.yml  # Build + push on merge to main
@@ -1028,6 +1129,7 @@ godot-agent/
 │   ├── compose.direct.yml    # Direct mount agent (one-shot)
 │   ├── compose.persistent.yml # Persistent agent container
 │   ├── compose.isolated.yml  # Isolated agent (clones repo)
+│   ├── compose.pool.yml      # Worker pool (multiple isolated agents)
 │   ├── compose.queue.yml     # Queue processor daemon
 │   ├── compose.staging.yml   # Staging mount agent
 │   └── compose.offline.yml   # Offline mode
@@ -1042,21 +1144,22 @@ godot-agent/
 │   ├── config/
 │   │   └── claude-settings.json  # Claude Code permissions (all granted)
 │   ├── install/
-│   │   ├── fetch_godot.sh    # Godot download + verification
 │   │   └── install_claude_code.sh
 │   └── scripts/
 │       ├── entrypoint.sh     # Container entrypoint (sets up Claude config)
+│       ├── issue-worker.js   # Pool worker (GitHub issue processing)
 │       └── queue-watcher.js  # Async task queue processor
 ├── scripts/
 │   ├── run-claude.sh         # Main entry point
-│   ├── run-godot.sh          # Godot headless runner
 │   ├── promote.sh            # Staging → live promotion
 │   ├── diff-review.sh        # Change report generator
 │   ├── scan-dangerous.sh     # Security pattern scanner
 │   ├── logs-report.sh        # Log analyzer
 │   ├── doctor.sh             # Environment health check
 │   ├── up.sh / down.sh       # Service lifecycle
-│   └── build.sh              # Image builder
+│   ├── build.sh              # Image builder
+│   ├── pool-add-workers.sh   # Add workers to running pool
+│   └── pool-cleanup-claims.sh # Clean stale claim comments
 ├── tests/                     # Security test suite
 │   ├── conftest.py           # Docker Compose fixtures
 │   ├── test_dns_filtering.py
@@ -1065,11 +1168,10 @@ godot-agent/
 │   ├── test_filesystem_restrictions.py
 │   └── test_offline_mode.py
 ├── logs/                      # Session logs (gitignored)
+├── pool-logs/                 # Worker pool conversation logs (gitignored)
 ├── Makefile                  # Convenient make targets
 ├── .env.example              # Environment template
-├── .cursorrules              # AI assistant conventions
 ├── README.md
-├── CICD_SETUP.md             # Step-by-step CI/CD setup guide
 └── SECURITY.md
 ```
 

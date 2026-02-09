@@ -1,0 +1,43 @@
+# Example nginx stream proxy template
+# Copy this file and modify for your documentation site
+#
+# To use:
+# 1. Copy to proxy_yourdomain.conf
+# 2. Replace example.com with your domain
+# 3. Add the domain to configs/coredns/hosts.allowlist
+# 4. Add the domain to configs/coredns/Corefile server block
+# 5. Add the proxy service to compose/compose.base.yml
+
+log_format proxy_example '$remote_addr [$time_local] '
+                         '$protocol $status $bytes_sent $bytes_received '
+                         '$session_time "$upstream_addr"';
+
+upstream example_upstream {
+    server example.com:443;
+}
+
+upstream example_upstream_http {
+    server example.com:80;
+}
+
+server {
+    listen 443;
+
+    access_log /dev/stdout proxy_example;
+    error_log /dev/stderr info;
+
+    proxy_pass example_upstream;
+    proxy_connect_timeout 10s;
+    proxy_timeout 120s;
+    proxy_socket_keepalive on;
+}
+
+server {
+    listen 80;
+
+    access_log /dev/stdout proxy_example;
+
+    proxy_pass example_upstream_http;
+    proxy_connect_timeout 10s;
+    proxy_timeout 60s;
+}

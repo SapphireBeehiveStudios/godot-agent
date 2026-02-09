@@ -6,7 +6,7 @@
 #   /opt/scripts/clone-repo.sh https://github.com/owner/repo.git [target-directory]
 #
 # Examples:
-#   /opt/scripts/clone-repo.sh SapphireBeehiveStudios/godot-agent
+#   /opt/scripts/clone-repo.sh SapphireBeehiveStudios/sapphire-bee
 #   /opt/scripts/clone-repo.sh myorg/myrepo /project/my-repo
 #
 # Requires:
@@ -106,6 +106,18 @@ chmod +x "${HOOKS_DIR}/pre-push"
 cd "$TARGET_DIR"
 BRANCH_NAME="claude/work-$(date +%Y%m%d-%H%M%S)"
 git checkout -b "$BRANCH_NAME"
+
+# Install pre-commit hooks if .pre-commit-config.yaml exists
+if [[ -f "${TARGET_DIR}/.pre-commit-config.yaml" ]]; then
+    echo "📦 Installing pre-commit hooks..."
+    if pre-commit install --install-hooks 2>/dev/null; then
+        echo "✅ Pre-commit hooks installed successfully"
+    else
+        echo "⚠️  Failed to install pre-commit hooks (continuing anyway)"
+    fi
+else
+    echo "ℹ️  No .pre-commit-config.yaml found, skipping pre-commit setup"
+fi
 
 echo "============================================"
 echo "✅ Repository cloned and ready!"

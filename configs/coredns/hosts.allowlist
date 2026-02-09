@@ -1,6 +1,6 @@
 # Allowlist hosts file for DNS filtering
 # Format: <proxy_ip> <hostname>
-# 
+#
 # These hostnames resolve to their respective proxy container IPs
 # The proxy containers handle the actual connection to the internet
 
@@ -17,12 +17,27 @@
 # GitHub codeload (for downloading archives/zips)
 10.100.1.12 codeload.github.com
 
-# Godot documentation
-10.100.1.13 docs.godotengine.org
-
 # Anthropic API (for Claude Code)
 10.100.1.14 api.anthropic.com
+
+# Go module proxy (for go get, go mod download)
+10.100.1.20 proxy.golang.org
+10.100.1.21 sum.golang.org
+
+# Python Package Index (for pip install)
+10.100.1.22 pypi.org
+10.100.1.23 files.pythonhosted.org
 
 # Note: These IPs are static assignments within the sandbox_net
 # They must match the ipv4_address settings in compose.base.yml
 # Also: Domains must be listed in the Corefile server block
+
+# ===========================================
+# Adding custom domains
+# ===========================================
+# To add a custom domain (e.g., docs.example.com):
+# 1. Add an entry here: 10.100.1.13 docs.example.com
+# 2. Add the domain to the Corefile server block
+# 3. Create a proxy service in compose/compose.base.yml
+# 4. Create nginx config in configs/nginx/proxy_example.conf
+#    (see configs/nginx/proxy_example.conf.template for reference)

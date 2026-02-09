@@ -1,11 +1,9 @@
 #!/bin/bash
-# build.sh - Build the agent container image
+# build.sh - Build the Sapphire Bee agent container image
 #
 # Usage:
 #   ./scripts/build.sh
 #   ./scripts/build.sh --no-cache
-#
-# Checksum verification is automatic using Godot's official SHA512-SUMS.txt
 
 set -euo pipefail
 
@@ -37,41 +35,26 @@ if [[ "${1:-}" == "--no-cache" ]]; then
     NO_CACHE="--no-cache"
 fi
 
-# Default values
-GODOT_VERSION="${GODOT_VERSION:-4.6}"
-GODOT_RELEASE_TYPE="${GODOT_RELEASE_TYPE:-beta2}"
-
-log_info "Building Claude-Godot Agent image"
-echo ""
-echo "Configuration:"
-echo "  GODOT_VERSION:      $GODOT_VERSION"
-echo "  GODOT_RELEASE_TYPE: $GODOT_RELEASE_TYPE"
-echo ""
-echo "Checksum: Auto-verified using Godot's official SHA512-SUMS.txt"
+log_info "Building Sapphire Bee agent image"
 echo ""
 
 log_info "Building image..."
 
 cd "$IMAGE_DIR"
 
-# Build the full version tag (e.g., 4.6-beta2 or 4.5-stable)
-GODOT_FULL_VERSION="${GODOT_VERSION}-${GODOT_RELEASE_TYPE}"
-
 docker build \
     $NO_CACHE \
-    --build-arg "GODOT_VERSION=${GODOT_VERSION}" \
-    --build-arg "GODOT_RELEASE_TYPE=${GODOT_RELEASE_TYPE}" \
-    -t claude-godot-agent:latest \
-    -t "claude-godot-agent:godot-${GODOT_FULL_VERSION}" \
+    -t sapphire-bee:latest \
     .
 
 log_info "Build complete!"
 echo ""
-echo "Image: claude-godot-agent:latest"
+echo "Image: sapphire-bee:latest"
 echo ""
 echo "To verify:"
-echo "  docker run --rm claude-godot-agent:latest godot --headless --version"
+echo "  docker run --rm sapphire-bee:latest claude --version"
 echo ""
 echo "To run Claude:"
-echo "  ./scripts/run-claude.sh direct /path/to/project"
+echo "  make up-agent PROJECT=/path/to/project"
+echo "  make claude"
 

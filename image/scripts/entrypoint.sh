@@ -137,7 +137,17 @@ if [[ -n "${GITHUB_REPO:-}" ]]; then
             WORK_BRANCH="claude/work-$(date +%Y%m%d-%H%M%S)"
             git checkout -b "${WORK_BRANCH}"
             echo "   🔀 Working branch: ${WORK_BRANCH}" >&2
-            
+
+            # Install pre-commit hooks if .pre-commit-config.yaml exists
+            if [[ -f "/project/.pre-commit-config.yaml" ]]; then
+                echo "   📦 Installing pre-commit hooks..." >&2
+                if pre-commit install --install-hooks 2>/dev/null; then
+                    echo "   ✅ Pre-commit hooks installed" >&2
+                else
+                    echo "   ⚠️  Failed to install pre-commit hooks" >&2
+                fi
+            fi
+
             # Install pre-push hook to protect main/master
             mkdir -p /project/.git/hooks
             cat > /project/.git/hooks/pre-push << 'HOOK'

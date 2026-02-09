@@ -14,10 +14,10 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           docker compose -f compose.base.yml -f compose.direct.yml config --quiet
           docker compose -f compose.base.yml -f compose.staging.yml config --quiet
           docker compose -f compose.offline.yml config --quiet
-          echo "✓ All compose files are valid"
+          echo "All compose files are valid"
 
       - name: Lint shell scripts
         uses: ludeeus/action-shellcheck@2.0.0
@@ -51,10 +51,10 @@ jobs:
 
   build-test:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -70,25 +70,22 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: claude-godot-agent:test
-          build-args: |
-            GODOT_VERSION=4.3
-            GODOT_RELEASE_TYPE=stable
+          tags: sapphire-bee:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Test container basics
         run: |
-          docker run --rm claude-godot-agent:test bash -c "
+          docker run --rm sapphire-bee:test bash -c "
             echo '=== Container Test ==='
             echo 'User:' \$(whoami)
             echo 'Home:' \$HOME
             echo 'Working dir:' \$(pwd)
             echo ''
             echo 'Checking for required tools...'
-            which bash && echo '✓ bash'
-            which git && echo '✓ git'
-            which node && echo '✓ node' || echo '⚠ node not found'
+            which bash && echo 'bash OK'
+            which git && echo 'git OK'
+            which node && echo 'node OK' || echo 'node not found'
             echo ''
             echo '=== Test Complete ==='
           "
@@ -96,10 +93,10 @@ jobs:
   security-tests:
     runs-on: ubuntu-latest
     needs: build-test  # Ensure image is built first
-    
+
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -115,10 +112,7 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: claude-godot-agent:latest
-          build-args: |
-            GODOT_VERSION=4.3
-            GODOT_RELEASE_TYPE=stable
+          tags: sapphire-bee:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -1,6 +1,6 @@
 # Security & Integration Tests
 
-This directory contains comprehensive tests for the Claude-Godot Sandbox security features and integrations.
+This directory contains comprehensive tests for the Sapphire Bee Sandbox security features and integrations.
 
 ## Overview
 

@@ -9,37 +9,34 @@ services:
     build:
       context: ../image
       dockerfile: Dockerfile
-      args:
-        - GODOT_VERSION=${GODOT_VERSION:-4.6}
-        - GODOT_RELEASE_TYPE=${GODOT_RELEASE_TYPE:-beta2}
-    image: claude-godot-agent:latest
+    image: sapphire-bee:latest
     container_name: agent_offline
     stdin_open: true
     tty: true
-    
+
     # Environment - no API key needed in offline mode
     environment:
       - HOME=/home/claude
       - USER=claude
       - OFFLINE_MODE=true
-    
+
     # No network at all
     network_mode: none
-    
+
     # Mount project (can be direct or staging)
     volumes:
       - ${PROJECT_PATH:-./../project}:/project:rw
-    
+
     # Security hardening
     read_only: true
     tmpfs:
       - /tmp:size=100M,mode=1777
-      - /home/claude:size=50M,mode=0755,uid=1000,gid=1000
+      - /home/claude:size=500M,mode=0755,uid=1000,gid=1000
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges:true
-    
+
     # Resource limits
     deploy:
       resources:
@@ -49,7 +46,7 @@ services:
           pids: 256
         reservations:
           memory: 256M
-    
+
     # Working directory
     working_dir: /project
 

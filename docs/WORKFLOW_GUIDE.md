@@ -1,6 +1,6 @@
-# Claude-Godot Workflow Guide
+# Sapphire Bee Workflow Guide
 
-A comprehensive guide to using Claude Code with Godot projects in the secure sandbox.
+A comprehensive guide to using Claude Code with development projects in the secure sandbox.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ A comprehensive guide to using Claude Code with Godot projects in the secure san
 
 ## Overview
 
-The godot-agent provides two workflows for interacting with Claude:
+Sapphire Bee provides two workflows for interacting with Claude:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -85,8 +85,8 @@ echo 'ANTHROPIC_API_KEY=your-key-here' >> .env
 make build
 
 # Or pull pre-built image
-docker pull ghcr.io/sapphirebeehivestudios/claude-godot-agent:latest
-docker tag ghcr.io/sapphirebeehivestudios/claude-godot-agent:latest claude-godot-agent:latest
+docker pull ghcr.io/sapphirebeehivestudios/sapphire-bee:latest
+docker tag ghcr.io/sapphirebeehivestudios/sapphire-bee:latest sapphire-bee:latest
 ```
 
 ### 4. Environment Check
@@ -115,10 +115,10 @@ Persistent mode keeps Claude running in a container, allowing instant access for
 
 ```bash
 # Start the persistent agent with your project
-make up-agent PROJECT=/path/to/your/godot/project
+make up-agent PROJECT=/path/to/your/project
 
 # Example:
-make up-agent PROJECT=~/Games/my-platformer
+make up-agent PROJECT=~/projects/my-app
 ```
 
 This:
@@ -141,8 +141,8 @@ This opens a conversation where you can chat back and forth:
 You: What files are in this project?
 Claude: I can see the following structure...
 
-You: Add a player controller script
-Claude: I'll create scripts/player_controller.gd...
+You: Add a user authentication module
+Claude: I'll create src/auth/authentication.py...
 
 You: exit
 ```
@@ -151,16 +151,16 @@ You: exit
 
 ```bash
 # Run a single prompt and return
-make claude P="List all GDScript files in this project"
+make claude P="List all Python files in this project"
 
 # Complex prompts with quotes
-make claude P="Create a player.gd script with WASD movement, jumping with Space, and gravity"
+make claude P="Create a user authentication module with login, logout, and session management"
 
 # Multi-line prompts (use shell quoting)
-make claude P="Refactor the enemy.gd script to:
-1. Use a state machine
-2. Add patrol behavior
-3. Add chase behavior when player is near"
+make claude P="Refactor the database module to:
+1. Use connection pooling
+2. Add retry logic
+3. Implement proper error handling"
 ```
 
 #### Non-Interactive / Automation Mode
@@ -201,8 +201,8 @@ make claude-shell
 
 # Inside the container:
 ls -la
-godot --version
-cat scripts/player.gd
+python --version
+cat src/main.py
 ```
 
 ### Stopping the Agent
@@ -216,22 +216,22 @@ make down-agent
 
 ```bash
 # Morning: Start your session
-make up-agent PROJECT=~/Games/my-platformer
+make up-agent PROJECT=~/projects/my-app
 
 # Work throughout the day
 make claude P="What's the current project structure?"
-make claude P="Add a main menu scene with Start and Quit buttons"
-make claude P="Create a game manager singleton"
+make claude P="Add a REST API endpoint for user profiles"
+make claude P="Create a configuration manager singleton"
 
 # Longer conversation for complex feature
 make claude
-> Let's implement a save/load system
+> Let's implement a caching system
 > ...back and forth conversation...
 > exit
 
 # Check something in the container
 make claude-shell
-$ cat scripts/game_manager.gd
+$ cat src/config.py
 $ exit
 
 # End of day
@@ -248,10 +248,10 @@ Queue mode runs Claude as a background daemon that processes task files automati
 
 ```bash
 # Start the queue processor
-make queue-start PROJECT=/path/to/your/godot/project
+make queue-start PROJECT=/path/to/your/project
 
 # Example:
-make queue-start PROJECT=~/Games/my-platformer
+make queue-start PROJECT=~/projects/my-app
 ```
 
 This:
@@ -265,10 +265,10 @@ This:
 
 ```bash
 # Add a task with a name
-make queue-add TASK="Add player movement" NAME=001-movement PROJECT=~/Games/my-platformer
+make queue-add TASK="Add user authentication" NAME=001-auth PROJECT=~/projects/my-app
 
 # Add another task
-make queue-add TASK="Add enemy AI with patrol and chase" NAME=002-enemies PROJECT=~/Games/my-platformer
+make queue-add TASK="Add API rate limiting middleware" NAME=002-ratelimit PROJECT=~/projects/my-app
 ```
 
 #### Dropping Files Directly
@@ -277,26 +277,26 @@ Create `.md` or `.txt` files in the queue directory:
 
 ```bash
 # Simple one-liner
-echo "Add a health bar UI" > ~/Games/my-platformer/.claude/queue/003-health.md
+echo "Add input validation to all forms" > ~/projects/my-app/.claude/queue/003-validation.md
 
 # More detailed task file
-cat > ~/Games/my-platformer/.claude/queue/004-inventory.md << 'EOF'
-# Implement Inventory System
+cat > ~/projects/my-app/.claude/queue/004-caching.md << 'EOF'
+# Implement Caching System
 
 ## Requirements
-- Create an Inventory class that can hold items
-- Each item has: name, icon, stack_size, description
-- UI panel that shows inventory grid (4x4)
-- Drag and drop support
+- Create a Cache class with TTL support
+- Support multiple backends (memory, Redis)
+- Cache decorator for functions
+- Automatic cache invalidation
 
 ## Files to create
-- scripts/inventory/inventory.gd
-- scripts/inventory/item.gd
-- scenes/ui/inventory_panel.tscn
+- src/cache/cache.py
+- src/cache/backends.py
+- src/cache/decorators.py
 
 ## Notes
-- Use a Resource for item definitions
-- Inventory should be a singleton for global access
+- Use dependency injection for backend selection
+- Cache should be configurable via environment
 EOF
 ```
 
@@ -317,7 +317,7 @@ Tasks are processed in **alphabetical order**. Use numeric prefixes to control o
 #### Check Queue Status
 
 ```bash
-make queue-status PROJECT=~/Games/my-platformer
+make queue-status PROJECT=~/projects/my-app
 ```
 
 Output:
@@ -327,14 +327,14 @@ Output:
 ╚══════════════════════════════════════════════════════════════════════╝
 
 📬 Pending tasks:
-   - 003-health.md
-   - 004-inventory.md
+   - 003-validation.md
+   - 004-caching.md
 
 ⚙️  Processing:
-   - 002-enemies.md
+   - 002-ratelimit.md
 
 ✅ Completed (last 5):
-   - 001-movement.md
+   - 001-auth.md
 
 ❌ Failed:
    (none)
@@ -354,10 +354,10 @@ This streams the queue processor output so you can watch Claude work.
 
 ```bash
 # Show the latest result
-make queue-results PROJECT=~/Games/my-platformer
+make queue-results PROJECT=~/projects/my-app
 
 # View a specific result
-cat ~/Games/my-platformer/.claude/results/001-movement.log
+cat ~/projects/my-app/.claude/results/001-auth.log
 ```
 
 ### Queue Directory Structure
@@ -370,20 +370,20 @@ your-project/
 │   ├── queue/           # Drop new tasks here
 │   │   └── 005-next-task.md
 │   ├── processing/      # Currently being worked on
-│   │   └── 004-inventory.md
+│   │   └── 004-caching.md
 │   ├── completed/       # Successfully finished
-│   │   ├── 001-movement.md
-│   │   ├── 002-enemies.md
-│   │   └── 003-health.md
+│   │   ├── 001-auth.md
+│   │   ├── 002-ratelimit.md
+│   │   └── 003-validation.md
 │   ├── failed/          # Tasks that errored
 │   │   └── (hopefully empty)
 │   └── results/         # Execution logs
-│       ├── 001-movement.log
-│       ├── 002-enemies.log
-│       └── 003-health.log
-├── scripts/
-├── scenes/
-└── project.godot
+│       ├── 001-auth.log
+│       ├── 002-ratelimit.log
+│       └── 003-validation.log
+├── src/
+├── tests/
+└── README.md
 ```
 
 ### Stopping the Queue
@@ -396,38 +396,38 @@ make queue-stop
 
 ```bash
 # Evening: Set up batch processing
-make queue-start PROJECT=~/Games/my-platformer
+make queue-start PROJECT=~/projects/my-app
 
 # Add all your tasks for overnight
-make queue-add TASK="Implement player movement with WASD and jumping" \
-    NAME=001-player PROJECT=~/Games/my-platformer
+make queue-add TASK="Implement user authentication with JWT" \
+    NAME=001-auth PROJECT=~/projects/my-app
 
-make queue-add TASK="Create 3 enemy types: slime, bat, skeleton" \
-    NAME=002-enemies PROJECT=~/Games/my-platformer
+make queue-add TASK="Create API rate limiting middleware" \
+    NAME=002-ratelimit PROJECT=~/projects/my-app
 
-make queue-add TASK="Add collectible coins with particle effects" \
-    NAME=003-coins PROJECT=~/Games/my-platformer
+make queue-add TASK="Add input validation for all endpoints" \
+    NAME=003-validation PROJECT=~/projects/my-app
 
-make queue-add TASK="Create main menu with animated background" \
-    NAME=004-menu PROJECT=~/Games/my-platformer
+make queue-add TASK="Create admin dashboard API endpoints" \
+    NAME=004-admin PROJECT=~/projects/my-app
 
-make queue-add TASK="Add save/load system using ConfigFile" \
-    NAME=005-save PROJECT=~/Games/my-platformer
+make queue-add TASK="Add comprehensive test coverage" \
+    NAME=005-tests PROJECT=~/projects/my-app
 
 # Check they're queued
-make queue-status PROJECT=~/Games/my-platformer
+make queue-status PROJECT=~/projects/my-app
 
-# Go to sleep 😴
+# Go to sleep
 
 # Morning: Check results
-make queue-status PROJECT=~/Games/my-platformer
-cat ~/Games/my-platformer/.claude/results/001-player.log
+make queue-status PROJECT=~/projects/my-app
+cat ~/projects/my-app/.claude/results/001-auth.log
 
 # Stop the queue
 make queue-stop
 
 # Review changes in git
-cd ~/Games/my-platformer
+cd ~/projects/my-app
 git status
 git diff
 ```
@@ -460,11 +460,11 @@ git diff
 ```bash
 # Switch from Persistent to Queue
 make down-agent
-make queue-start PROJECT=~/Games/my-platformer
+make queue-start PROJECT=~/projects/my-app
 
 # Switch from Queue to Persistent
 make queue-stop
-make up-agent PROJECT=~/Games/my-platformer
+make up-agent PROJECT=~/projects/my-app
 ```
 
 ---
@@ -476,7 +476,7 @@ make up-agent PROJECT=~/Games/my-platformer
 Always track your project with git so you can review/revert Claude's changes:
 
 ```bash
-cd ~/Games/my-platformer
+cd ~/projects/my-app
 
 # Before starting a session
 git status  # Make sure working tree is clean
@@ -485,33 +485,33 @@ git checkout -b feature/claude-additions
 # After Claude makes changes
 git diff
 git add -p  # Selectively stage changes
-git commit -m "feat: add player movement (Claude-assisted)"
+git commit -m "feat: add authentication module (Claude-assisted)"
 ```
 
 ### 2. Write Clear Task Descriptions
 
 Bad:
 ```
-Add stuff to the game
+Add stuff to the app
 ```
 
 Good:
 ```
-Create a player controller script (scripts/player.gd) with:
-- WASD movement using CharacterBody2D
-- Jump with Space key (jump_velocity = -400)
-- Gravity (use project settings)
-- Coyote time (0.1 seconds)
-- Jump buffering (0.1 seconds)
+Create a user authentication module (src/auth/auth.py) with:
+- JWT-based authentication
+- Login endpoint with email/password
+- Token refresh mechanism
+- Password hashing with bcrypt
+- Session management with Redis
 ```
 
-### 3. Review Before Running in Godot
+### 3. Review Before Running Generated Code
 
-Claude can write plausible-looking code that has bugs. Before running in Godot:
+Claude can write plausible-looking code that has bugs. Before running:
 
 1. Review the generated code
 2. Check for obvious issues
-3. Run the security scanner: `make scan PROJECT=~/Games/my-platformer`
+3. Run the security scanner: `make scan PROJECT=~/projects/my-app`
 
 ### 4. Use Staging Mode for Untrusted Tasks
 
@@ -519,33 +519,33 @@ If you're not sure about a task, use staging mode to isolate changes:
 
 ```bash
 # Create staging area
-mkdir -p ~/godot-staging
-cp -r ~/Games/my-platformer/* ~/godot-staging/
+mkdir -p ~/staging
+cp -r ~/projects/my-app/* ~/staging/
 
 # Run in staging mode
-make run-staging STAGING=~/godot-staging
+make run-staging STAGING=~/staging
 
 # Review changes
-make diff-review STAGING=~/godot-staging LIVE=~/Games/my-platformer
+make diff-review STAGING=~/staging LIVE=~/projects/my-app
 
 # If satisfied, promote
-make promote STAGING=~/godot-staging LIVE=~/Games/my-platformer
+make promote STAGING=~/staging LIVE=~/projects/my-app
 ```
 
 ### 5. Break Down Complex Tasks
 
 Instead of:
 ```
-Build the entire game
+Build the entire application
 ```
 
 Break it into:
 ```
 001-project-setup.md     - Set up project structure and folders
-002-player.md            - Create player with movement
-003-enemies.md           - Add basic enemies
-004-level.md             - Create first level layout
-005-ui.md                - Add HUD and menus
+002-database.md          - Create database models and migrations
+003-api-auth.md          - Add authentication endpoints
+004-api-core.md          - Create core API endpoints
+005-tests.md             - Add comprehensive test coverage
 ```
 
 ### 6. Include Context in Queue Tasks
@@ -553,16 +553,16 @@ Break it into:
 Queue tasks run independently without conversation context. Include relevant info:
 
 ```markdown
-# Add Enemy AI
+# Add Rate Limiting
 
 ## Current Project Context
-- Using Godot 4.x with GDScript
-- Player script is at scripts/player.gd
-- Using CharacterBody2D for physics entities
-- Art style is pixel art (16x16 sprites)
+- Using Python 3.11 with FastAPI
+- Database is PostgreSQL with SQLAlchemy ORM
+- Authentication uses JWT tokens
+- Redis is available for caching
 
 ## Task
-Create an enemy that patrols and chases the player...
+Create rate limiting middleware that limits requests per user...
 ```
 
 ---
@@ -581,7 +581,7 @@ docker rm -f agent  # Remove if stuck
 
 # Restart everything
 make down
-make up-agent PROJECT=~/Games/my-platformer
+make up-agent PROJECT=~/projects/my-app
 ```
 
 ### Claude Not Responding
@@ -601,21 +601,21 @@ docker logs agent
 
 ```bash
 # Check queue processor is running
-make queue-status PROJECT=~/Games/my-platformer
+make queue-status PROJECT=~/projects/my-app
 
 # Check logs for errors
 make queue-logs
 
 # Restart queue
 make queue-stop
-make queue-start PROJECT=~/Games/my-platformer
+make queue-start PROJECT=~/projects/my-app
 ```
 
 ### Permission Issues
 
 ```bash
 # If .claude directories have wrong permissions
-sudo chown -R $(whoami) ~/Games/my-platformer/.claude
+sudo chown -R $(whoami) ~/projects/my-app/.claude
 ```
 
 ### Container Exits Immediately
@@ -690,5 +690,5 @@ make restart
 - **SECURITY.md**: Threat model and security considerations
 - **GitHub Issues**: Report bugs or request features
 
-Happy game development! 🎮
+Happy coding!
 

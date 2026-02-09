@@ -1,7 +1,7 @@
 # compose.base.yml - Base compose file with networks, DNS filter, and proxy services
 # Does NOT include the agent container - that's in compose.direct.yml or compose.staging.yml
 
-name: claude-godot-sandbox
+name: sapphire-bee-sandbox
 
 networks:
   # Internal network for sandbox - no direct internet access
@@ -126,31 +126,6 @@ services:
       - no-new-privileges:true
 
   # ===========================================
-  # Proxy: docs.godotengine.org
-  # ===========================================
-  proxy_godot_docs:
-    image: nginx:1.25-alpine
-    container_name: proxy_godot_docs
-    restart: unless-stopped
-    volumes:
-      - ../configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ../configs/nginx/proxy_godot_docs.conf:/etc/nginx/conf.d/stream.conf:ro
-      - ../configs/nginx/empty.conf:/etc/nginx/conf.d/default.conf:ro
-    networks:
-      sandbox_net:
-        ipv4_address: 10.100.1.13
-      egress_net:
-    cap_drop:
-      - ALL
-    cap_add:
-      - NET_BIND_SERVICE
-      - CHOWN
-      - SETGID
-      - SETUID
-    security_opt:
-      - no-new-privileges:true
-
-  # ===========================================
   # Proxy: api.anthropic.com
   # ===========================================
   proxy_anthropic_api:
@@ -199,4 +174,134 @@ services:
       - SETUID
     security_opt:
       - no-new-privileges:true
+
+  # ===========================================
+  # Proxy: proxy.golang.org (Go module proxy)
+  # ===========================================
+  proxy_golang:
+    image: nginx:1.25-alpine
+    container_name: proxy_golang
+    restart: unless-stopped
+    volumes:
+      - ../configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../configs/nginx/proxy_golang.conf:/etc/nginx/conf.d/stream.conf:ro
+      - ../configs/nginx/empty.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      sandbox_net:
+        ipv4_address: 10.100.1.20
+      egress_net:
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+
+  # ===========================================
+  # Proxy: sum.golang.org (Go checksum database)
+  # ===========================================
+  proxy_golang_sum:
+    image: nginx:1.25-alpine
+    container_name: proxy_golang_sum
+    restart: unless-stopped
+    volumes:
+      - ../configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../configs/nginx/proxy_golang_sum.conf:/etc/nginx/conf.d/stream.conf:ro
+      - ../configs/nginx/empty.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      sandbox_net:
+        ipv4_address: 10.100.1.21
+      egress_net:
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+
+  # ===========================================
+  # Proxy: pypi.org (Python Package Index)
+  # ===========================================
+  proxy_pypi:
+    image: nginx:1.25-alpine
+    container_name: proxy_pypi
+    restart: unless-stopped
+    volumes:
+      - ../configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../configs/nginx/proxy_pypi.conf:/etc/nginx/conf.d/stream.conf:ro
+      - ../configs/nginx/empty.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      sandbox_net:
+        ipv4_address: 10.100.1.22
+      egress_net:
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+
+  # ===========================================
+  # Proxy: files.pythonhosted.org (Python packages)
+  # ===========================================
+  proxy_pythonhosted:
+    image: nginx:1.25-alpine
+    container_name: proxy_pythonhosted
+    restart: unless-stopped
+    volumes:
+      - ../configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../configs/nginx/proxy_pythonhosted.conf:/etc/nginx/conf.d/stream.conf:ro
+      - ../configs/nginx/empty.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      sandbox_net:
+        ipv4_address: 10.100.1.23
+      egress_net:
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+
+  # ===========================================
+  # Example: Custom documentation proxy
+  # ===========================================
+  # To add a custom documentation site:
+  # 1. Uncomment and modify this service
+  # 2. Create configs/nginx/proxy_example.conf (see proxy_example.conf.template)
+  # 3. Add the domain to configs/coredns/hosts.allowlist
+  #
+  # proxy_example_docs:
+  #   image: nginx:1.25-alpine
+  #   container_name: proxy_example_docs
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ../configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ../configs/nginx/proxy_example.conf:/etc/nginx/conf.d/stream.conf:ro
+  #     - ../configs/nginx/empty.conf:/etc/nginx/conf.d/default.conf:ro
+  #   networks:
+  #     sandbox_net:
+  #       ipv4_address: 10.100.1.13  # Pick an unused IP
+  #     egress_net:
+  #   cap_drop:
+  #     - ALL
+  #   cap_add:
+  #     - NET_BIND_SERVICE
+  #     - CHOWN
+  #     - SETGID
+  #     - SETUID
+  #   security_opt:
+  #     - no-new-privileges:true
 

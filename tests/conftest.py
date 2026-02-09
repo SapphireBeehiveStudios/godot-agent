@@ -1,5 +1,5 @@
 """
-Pytest fixtures for Claude-Godot Sandbox security tests.
+Pytest fixtures for Sapphire Bee Sandbox security tests.
 
 These fixtures manage Docker Compose lifecycle and provide helpers for
 executing commands inside containers and verifying security constraints.
@@ -191,7 +191,7 @@ def sandbox_stack() -> Generator[DockerComposeStack, None, None]:
     """
     stack = DockerComposeStack(
         compose_files=["compose.base.yml", "compose.direct.yml"],
-        # Use compose file's project name (claude-godot-sandbox)
+        # Use compose file's project name (sapphire-bee-sandbox)
     )
     
     # Ensure clean state
@@ -243,7 +243,7 @@ def temp_project_dir(tmp_path: Path) -> Path:
     """Create a temporary project directory for testing mounts."""
     project_dir = tmp_path / "test-project"
     project_dir.mkdir()
-    (project_dir / "test.gd").write_text('print("Hello")')
+    (project_dir / "README.md").write_text("# Test Project")
     return project_dir
 
 

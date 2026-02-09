@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Godot Agent - Secure AI Sandbox for Game Development</title>
-  <meta name="description" content="A secure, sandboxed Docker environment for running Claude Code with Godot game development projects.">
+  <title>Sapphire Bee - Secure AI Sandbox for Software Development</title>
+  <meta name="description" content="A secure, sandboxed Docker environment for running Claude Code with any development projects.">
   <link rel="icon" type="image/png" href="github-app-logo.png">
   <link rel="apple-touch-icon" href="github-app-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -681,14 +681,14 @@
   <nav>
     <div class="container">
       <a href="#" class="logo">
-        <img src="github-app-logo.png" alt="Godot Agent" class="logo-icon">
-        godot-agent
+        <img src="github-app-logo.png" alt="Sapphire Bee" class="logo-icon">
+        Sapphire Bee
       </a>
       <ul>
         <li><a href="#features">Features</a></li>
         <li><a href="#modes">Modes</a></li>
         <li><a href="#quickstart">Quick Start</a></li>
-        <li><a href="https://github.com/SapphireBeehiveStudios/godot-agent" class="nav-cta">GitHub</a></li>
+        <li><a href="https://github.com/SapphireBeehiveStudios/sapphire-bee" class="nav-cta">GitHub</a></li>
       </ul>
     </div>
   </nav>
@@ -696,10 +696,10 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <h1>Secure AI Sandbox for <span>Godot</span> Development</h1>
-        <p>Run Claude Code in a hardened Docker container with network allowlisting, filesystem isolation, and full Godot runtime. Build games faster, safely.</p>
+        <h1>Secure AI Sandbox for <span>Software</span> Development</h1>
+        <p>Run Claude Code in a hardened Docker container with network allowlisting, filesystem isolation, and comprehensive security. Build software faster, safely.</p>
         <div class="hero-buttons">
-          <a href="https://github.com/SapphireBeehiveStudios/godot-agent" class="btn btn-primary">
+          <a href="https://github.com/SapphireBeehiveStudios/sapphire-bee" class="btn btn-primary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
             Get Started
           </a>
@@ -716,12 +716,12 @@
         </div>
         <div class="terminal-body">
           <div class="terminal-line"><span class="terminal-comment"># Start persistent agent</span></div>
-          <div class="terminal-line"><span class="terminal-prompt">❯</span> <span class="terminal-cmd">make up-agent PROJECT=~/my-game</span></div>
+          <div class="terminal-line"><span class="terminal-prompt">❯</span> <span class="terminal-cmd">make up-agent PROJECT=~/my-project</span></div>
           <div class="terminal-line"><span class="terminal-output">✓ Infrastructure started</span></div>
           <div class="terminal-line"><span class="terminal-output">✓ Agent container running</span></div>
           <div class="terminal-line">&nbsp;</div>
-          <div class="terminal-line"><span class="terminal-prompt">❯</span> <span class="terminal-cmd">make claude P="Add player movement"</span></div>
-          <div class="terminal-line"><span class="terminal-success">✓ Created player.gd with WASD controls</span></div>
+          <div class="terminal-line"><span class="terminal-prompt">❯</span> <span class="terminal-cmd">make claude P="Add user authentication"</span></div>
+          <div class="terminal-line"><span class="terminal-success">✓ Created auth module with JWT support</span></div>
         </div>
       </div>
     </div>
@@ -738,7 +738,7 @@
         <div class="feature-card">
           <div class="feature-icon">🌐</div>
           <h3>Network Allowlisting</h3>
-          <p>CoreDNS filters all DNS queries. Only GitHub, Godot docs, and Anthropic API are reachable. Everything else gets NXDOMAIN.</p>
+          <p>CoreDNS filters all DNS queries. Only GitHub and Anthropic API are reachable. Everything else gets NXDOMAIN.</p>
         </div>
 
         <div class="feature-card">
@@ -754,9 +754,9 @@
         </div>
 
         <div class="feature-card">
-          <div class="feature-icon">🎮</div>
-          <h3>Full Godot Runtime</h3>
-          <p>Godot 4.6 headless included. Validate projects, run tests, export builds—all inside the sandbox.</p>
+          <div class="feature-icon">🛠️</div>
+          <h3>Full Development Environment</h3>
+          <p>Git, Node.js, Python, and common development tools included. Build and test projects inside the sandbox.</p>
         </div>
 
         <div class="feature-card">
@@ -789,8 +789,8 @@
 │   ┌──────────────────┐         ┌────────────────────────────────────┐   │
 │   │    <span class="highlight">dnsfilter</span>     │◄───DNS───│           AGENT CONTAINER         │   │
 │   │    (CoreDNS)     │         │   ┌────────────┐  ┌────────────┐   │   │
-│   │                  │         │   │ Claude Code│  │   Godot    │   │   │
-│   │ github.com → ✓   │         │   │    CLI     │  │  Headless  │   │   │
+│   │                  │         │   │ Claude Code│  │    Dev     │   │   │
+│   │ github.com → ✓   │         │   │    CLI     │  │   Tools    │   │   │
 │   │ evil.com   → ✗   │         │   └────────────┘  └────────────┘   │   │
 │   └──────────────────┘         └────────────────────────────────────┘   │
 │            │                                      │                      │
@@ -798,14 +798,14 @@
 │            ▼                                      ▼                      │
 │   ┌──────────────────────────────────────────────────────────────────┐  │
 │   │                         PROXY LAYER                               │  │
-│   │    proxy_github    proxy_godot_docs    proxy_anthropic_api       │  │
+│   │         proxy_github            proxy_anthropic_api              │  │
 │   └──────────────────────────────────────────────────────────────────┘  │
 │                                   │                                      │
 └───────────────────────────────────┼──────────────────────────────────────┘
                                     │ <span class="highlight">egress_net</span> (Internet Access)
                                     ▼
                           ┌─────────────────────┐
-                          │  GitHub, Godot Docs │
+                          │       GitHub        │
                           │   Anthropic API     │
                           └─────────────────────┘
         </pre>
@@ -826,8 +826,8 @@
           <h3>Persistent Mode</h3>
           <p>Keep the agent running for instant Claude access. Context persists across commands.</p>
           <div class="mode-code">
-            make up-agent PROJECT=~/game<br>
-            make claude P="Add jump"<br>
+            make up-agent PROJECT=~/project<br>
+            make claude P="Add feature"<br>
             make claude P="Fix bug"<br>
             make down-agent
           </div>
@@ -838,8 +838,8 @@
           <h3>Queue Mode</h3>
           <p>Drop task files in a directory and walk away. Perfect for overnight batch processing.</p>
           <div class="mode-code">
-            make queue-start PROJECT=~/game<br>
-            echo "Add AI" > .claude/queue/001.md<br>
+            make queue-start PROJECT=~/project<br>
+            echo "Add API" > .claude/queue/001.md<br>
             make queue-status<br>
             make queue-stop
           </div>
@@ -850,10 +850,10 @@
           <h3>One-Shot Mode</h3>
           <p>Fresh container each time. Maximum isolation for untrusted tasks or testing.</p>
           <div class="mode-code">
-            make run-direct PROJECT=~/game<br>
+            make run-direct PROJECT=~/project<br>
             <span style="color: var(--text-muted)"># or for extra safety:</span><br>
             make run-staging STAGING=~/staging<br>
-            make run-offline PROJECT=~/game
+            make run-offline PROJECT=~/project
           </div>
         </div>
       </div>
@@ -873,8 +873,8 @@
           <div class="step-content">
             <h4>Clone the Repository</h4>
             <div class="step-code">
-              git clone https://github.com/SapphireBeehiveStudios/godot-agent.git<br>
-              cd godot-agent
+              git clone https://github.com/SapphireBeehiveStudios/sapphire-bee.git<br>
+              cd sapphire-bee
             </div>
           </div>
         </div>
@@ -908,10 +908,10 @@
           <div class="step-number">4</div>
           <div class="step-content">
             <h4>Start Building</h4>
-            <p>Launch the persistent agent with your Godot project</p>
+            <p>Launch the persistent agent with your project</p>
             <div class="step-code">
               make build<br>
-              make up-agent PROJECT=/path/to/your/godot/project<br>
+              make up-agent PROJECT=/path/to/your/project<br>
               make claude P="What's in this project?"
             </div>
           </div>
@@ -923,14 +923,14 @@
   <footer>
     <div class="container">
       <div class="footer-links">
-        <a href="https://github.com/SapphireBeehiveStudios/godot-agent">GitHub</a>
-        <a href="https://github.com/SapphireBeehiveStudios/godot-agent/blob/main/README.md">Documentation</a>
-        <a href="https://github.com/SapphireBeehiveStudios/godot-agent/blob/main/SECURITY.md">Security</a>
-        <a href="https://github.com/SapphireBeehiveStudios/godot-agent/blob/main/CONTRIBUTING.md">Contributing</a>
-        <a href="https://github.com/SapphireBeehiveStudios/godot-agent/issues">Issues</a>
+        <a href="https://github.com/SapphireBeehiveStudios/sapphire-bee">GitHub</a>
+        <a href="https://github.com/SapphireBeehiveStudios/sapphire-bee/blob/main/README.md">Documentation</a>
+        <a href="https://github.com/SapphireBeehiveStudios/sapphire-bee/blob/main/SECURITY.md">Security</a>
+        <a href="https://github.com/SapphireBeehiveStudios/sapphire-bee/blob/main/CONTRIBUTING.md">Contributing</a>
+        <a href="https://github.com/SapphireBeehiveStudios/sapphire-bee/issues">Issues</a>
       </div>
       <div class="footer-meta">
-        MIT License · Built for <a href="https://godotengine.org">Godot</a> + <a href="https://www.anthropic.com/claude">Claude</a>
+        MIT License · Built for <a href="https://www.anthropic.com/claude">Claude</a>
       </div>
     </div>
   </footer>

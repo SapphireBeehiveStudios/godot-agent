@@ -28,14 +28,14 @@ def docker_image():
     """Ensure the docker image is available."""
     # Check if image exists
     result = subprocess.run(
-        ["docker", "images", "-q", "claude-godot-agent:latest"],
+        ["docker", "images", "-q", "sapphire-bee:latest"],
         capture_output=True,
         text=True,
     )
     if not result.stdout.strip():
         pytest.skip("Docker image not built. Run 'make build' first.")
-    
-    return "claude-godot-agent:latest"
+
+    return "sapphire-bee:latest"
 
 
 @pytest.fixture(scope="module")

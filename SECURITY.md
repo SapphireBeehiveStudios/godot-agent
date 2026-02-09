@@ -1,6 +1,6 @@
 # Security Guide
 
-This document describes the security model, configuration requirements, and best practices for the Claude-Godot Sandbox.
+This document describes the security model, configuration requirements, and best practices for the Sapphire Bee Sandbox.
 
 ## Security Model Overview
 
@@ -132,40 +132,50 @@ Run the automated scanner:
 
 ### Manual Review Patterns
 
-Look for these high-risk patterns in GDScript:
+Look for these high-risk patterns in your code:
 
-```gdscript
-# Code Execution
-OS.execute(...)           # Can run arbitrary commands
-OS.create_process(...)    # Spawns external processes
-Expression.execute(...)   # Dynamic code execution
+**Shell/Bash:**
+```bash
+# Command injection vectors
+eval "$user_input"           # Dynamic code execution
+bash -c "$cmd"               # Shell command execution
+curl ... | bash              # Remote code execution
+```
 
-# File System Access
-FileAccess.open("/etc/passwd", ...)  # Reading system files
-DirAccess.remove_absolute(...)        # Deleting files
+**Python:**
+```python
+# Code execution
+exec(...)                    # Dynamic code execution
+eval(...)                    # Expression evaluation
+subprocess.run(..., shell=True)  # Shell injection risk
+os.system(...)               # Command execution
+```
 
-# Network Operations
-HTTPRequest.request(...)              # Arbitrary HTTP calls
-TCPServer.listen(...)                 # Opening ports
+**JavaScript/Node:**
+```javascript
+// Code execution
+eval(...)                    // Dynamic code execution
+new Function(...)            // Dynamic function creation
+child_process.exec(...)      // Shell command execution
 ```
 
 ### Grep Commands for Manual Review
 
 ```bash
-# Find all OS.execute calls
-grep -rn "OS\.execute" --include="*.gd" /path/to/project
+# Find eval/exec patterns
+grep -rn "eval\|exec" --include="*.py" --include="*.js" /path/to/project
 
-# Find file access outside project
-grep -rn 'FileAccess\.open.*"/' --include="*.gd" /path/to/project
+# Find subprocess calls
+grep -rn "subprocess\|os\.system" --include="*.py" /path/to/project
 
-# Find network code
-grep -rn "HTTPRequest\|TCPServer\|UDPServer" --include="*.gd" /path/to/project
+# Find child_process usage
+grep -rn "child_process\|spawn\|exec" --include="*.js" /path/to/project
 
-# Find dynamic code loading
-grep -rn "load\|preload.*\.gd" --include="*.gd" /path/to/project
+# Find shell script execution
+grep -rn "bash -c\|sh -c" /path/to/project
 ```
 
-### Before Running Godot Editor
+### Before Running Generated Code
 
 1. **Stop Claude session** first
 2. **Review git diff** of all changes
@@ -270,7 +280,7 @@ This means:
 ### DNS Filtering
 
 The CoreDNS filter:
-- **Allows**: Specific domains (GitHub, Godot docs, Anthropic API)
+- **Allows**: Specific domains (GitHub, Anthropic API)
 - **Blocks**: Everything else (returns NXDOMAIN)
 - **Logs**: All queries (for audit)
 

@@ -1,4 +1,4 @@
-# GitHub App Authentication for Godot Agent MCP Integration
+# GitHub App Authentication for Sapphire Bee MCP Integration
 #
 # This module provides GitHub App authentication to generate short-lived
 # installation tokens for the GitHub MCP server.

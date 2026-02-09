@@ -1,9 +1,9 @@
-# CoreDNS Configuration for Claude-Godot Sandbox
+# CoreDNS Configuration for Sapphire Bee Sandbox
 # Implements DNS allowlisting: returns proxy IPs for allowed domains,
 # NXDOMAIN for everything else.
 
 # Allowlisted domains - return proxy IPs from hosts file
-github.com. www.github.com. raw.githubusercontent.com. codeload.github.com. api.github.com. docs.godotengine.org. api.anthropic.com. {
+github.com. www.github.com. raw.githubusercontent.com. codeload.github.com. api.github.com. api.anthropic.com. proxy.golang.org. sum.golang.org. pypi.org. files.pythonhosted.org. {
     log {
         class all
     }
@@ -19,14 +19,14 @@ github.com. www.github.com. raw.githubusercontent.com. codeload.github.com. api.
     errors
     health :8080
     ready :8181
-    
+
     template IN A {
         rcode NXDOMAIN
     }
-    
+
     template IN AAAA {
         rcode NXDOMAIN
     }
-    
+
     cache 60
 }

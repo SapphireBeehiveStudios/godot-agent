@@ -1,6 +1,6 @@
 # GitHub App MCP Integration
 
-This document describes the implementation of GitHub App authentication with MCP (Model Context Protocol) integration for the sandboxed Godot agent.
+This document describes the implementation of GitHub App authentication with MCP (Model Context Protocol) integration for the sandboxed Sapphire Bee agent.
 
 ## Overview
 
@@ -51,7 +51,7 @@ The integration replaces long-lived Personal Access Tokens (PATs) with short-liv
 ### New Components
 
 ```
-godot-agent/
+sapphire-bee/
 ├── github_app/                          # Python module for token generation
 │   ├── __init__.py                      # Package exports
 │   ├── token_generator.py               # GitHubAppTokenGenerator class
@@ -175,7 +175,7 @@ Provides the sandboxed Claude agent with:
 - Environment overview (what's available, what's restricted)
 - Network access information (allowlisted domains)
 - Git/GitHub workflow guidance
-- Godot usage instructions
+- Development workflow instructions
 - Security boundaries
 
 This file is copied to `~/.claude/CLAUDE.md` at container start.

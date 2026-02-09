@@ -1,5 +1,5 @@
 #!/bin/bash
-# doctor.sh - Health check for Claude-Godot Sandbox environment
+# doctor.sh - Health check for Sapphire Bee Sandbox environment
 #
 # Usage:
 #   ./scripts/doctor.sh
@@ -47,7 +47,7 @@ check_info() {
 
 echo ""
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║          CLAUDE-GODOT SANDBOX HEALTH CHECK                   ║"
+echo "║             SAPPHIRE BEE SANDBOX HEALTH CHECK                ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -56,14 +56,14 @@ echo "Docker Engine:"
 
 if command -v docker &> /dev/null; then
     check_pass "Docker CLI found: $(which docker)"
-    
+
     if docker info &> /dev/null; then
         check_pass "Docker daemon is running"
-        
+
         # Check Docker version
         DOCKER_VERSION=$(docker version --format '{{.Server.Version}}' 2>/dev/null || echo "unknown")
         check_info "Docker version: $DOCKER_VERSION"
-        
+
         # Check for Apple Silicon
         ARCH=$(uname -m)
         if [[ "$ARCH" == "arm64" ]]; then
@@ -188,10 +188,10 @@ echo ""
 # === Image Build Test ===
 echo "Image Build:"
 
-if docker images claude-godot-agent:latest --format "{{.Repository}}" 2>/dev/null | grep -q "claude-godot-agent"; then
+if docker images sapphire-bee:latest --format "{{.Repository}}" 2>/dev/null | grep -q "sapphire-bee"; then
     check_pass "Agent image exists"
-    
-    IMAGE_DATE=$(docker images claude-godot-agent:latest --format "{{.CreatedAt}}" 2>/dev/null || echo "unknown")
+
+    IMAGE_DATE=$(docker images sapphire-bee:latest --format "{{.CreatedAt}}" 2>/dev/null || echo "unknown")
     check_info "Image created: $IMAGE_DATE"
 else
     check_warn "Agent image not built yet"
@@ -204,7 +204,7 @@ echo ""
 echo "Network Configuration:"
 
 # Check if sandbox network exists
-if docker network ls --format "{{.Name}}" 2>/dev/null | grep -q "claude-godot-sandbox_sandbox_net"; then
+if docker network ls --format "{{.Name}}" 2>/dev/null | grep -q "sapphire-bee-sandbox_sandbox_net"; then
     check_pass "Sandbox network exists"
 else
     check_info "Sandbox network not created (will be created on first run)"
@@ -217,15 +217,15 @@ echo "Service Status:"
 
 if docker compose -f compose.base.yml ps --quiet 2>/dev/null | grep -q .; then
     check_pass "Base services are running"
-    
+
     # Test DNS resolution
     echo ""
     echo "DNS Resolution Test:"
-    
+
     # Start a test container to check DNS
     TEST_RESULT=$(docker compose -f compose.base.yml -f compose.direct.yml run --rm --no-deps agent \
         sh -c "nslookup github.com 2>&1 || echo 'DNS_FAIL'" 2>/dev/null || echo "CONTAINER_FAIL")
-    
+
     if [[ "$TEST_RESULT" != *"DNS_FAIL"* && "$TEST_RESULT" != *"CONTAINER_FAIL"* ]]; then
         check_pass "DNS resolution working for github.com"
     else

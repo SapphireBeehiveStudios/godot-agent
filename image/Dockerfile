@@ -1,42 +1,16 @@
-# Dockerfile for Claude-Godot Sandbox Agent
-# Provides: Godot 4.x headless + Claude Code CLI
-# Target: Linux arm64 (Apple Silicon via Docker)
+# Dockerfile for Sapphire Bee Sandbox Agent
+# Provides: Claude Code CLI in a secure, sandboxed environment
+# Target: Linux arm64/amd64
 #
 # Optimized for build cache efficiency and faster rebuilds
 
-# Build arguments for version pinning
-ARG GODOT_VERSION=4.6
-ARG GODOT_RELEASE_TYPE=beta2
-
-# NOTE: Native arm64 Godot builds may require building from source
-
-# --- Stage 1: Build/Download dependencies ---
-FROM debian:bookworm-slim AS builder
-
-ARG GODOT_VERSION
-ARG GODOT_RELEASE_TYPE
-
-# Install build tools and fetch Godot in a single layer for better caching
-# Copy script first (separate layer) so script changes don't invalidate apt cache
-COPY install/fetch_godot.sh /tmp/fetch_godot.sh
-# hadolint ignore=DL3008
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    unzip \
-    && chmod +x /tmp/fetch_godot.sh \
-    && GODOT_VERSION=${GODOT_VERSION} \
-    GODOT_RELEASE_TYPE=${GODOT_RELEASE_TYPE} \
-    /tmp/fetch_godot.sh \
-    && rm -rf /var/lib/apt/lists/*
-
-# --- Stage 2: Runtime image ---
+# --- Runtime image ---
 FROM debian:bookworm-slim AS runtime
 
 # Labels for image metadata
-LABEL org.opencontainers.image.title="Claude-Godot Sandbox Agent"
-LABEL org.opencontainers.image.description="Sandboxed environment for Claude Code + Godot development"
-LABEL org.opencontainers.image.source="https://github.com/SapphireBeehiveStudios/godot-agent"
+LABEL org.opencontainers.image.title="Sapphire Bee Sandbox Agent"
+LABEL org.opencontainers.image.description="Sandboxed environment for Claude Code development"
+LABEL org.opencontainers.image.source="https://github.com/SapphireBeehiveStudios/sapphire-bee"
 
 # Use bash with pipefail for proper error handling in piped commands
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -57,22 +31,44 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     file \
     make \
-    # Python for GitHub App token generation
+    # Python for GitHub App token generation and testing
     python3 \
-    # Godot runtime dependencies
-    libfontconfig1 \
-    libgl1 \
-    libxi6 \
-    libxcursor1 \
-    libxinerama1 \
-    libxrandr2 \
-    libxrender1 \
+    python3-pip \
+    python3-venv \
+    # Build essentials for compiling dependencies
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Go 1.24 (required for CVE-2025-61729 and CVE-2025-61727 fixes)
+# These CVEs affect crypto/x509 certificate validation - critical security vulnerabilities
+# Download and install from official Go releases
+RUN ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+        amd64) GO_ARCH=amd64 ;; \
+        arm64) GO_ARCH=arm64 ;; \
+        *) echo "Unsupported architecture: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSL "https://go.dev/dl/go1.24.0.linux-${GO_ARCH}.tar.gz" -o /tmp/go.tar.gz && \
+    tar -C /usr/local -xzf /tmp/go.tar.gz && \
+    rm /tmp/go.tar.gz && \
+    ln -s /usr/local/go/bin/go /usr/local/bin/go && \
+    ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+
+ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOPATH="/home/claude/go"
 
 # Install uv for Python package management (faster than pip)
 # hadolint ignore=DL3013
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh \
-    && uv pip install --system --break-system-packages PyJWT cryptography requests
+    && uv pip install --system --break-system-packages \
+        PyJWT \
+        cryptography \
+        requests \
+        pre-commit \
+        black \
+        ruff \
+        detect-secrets
 
 # Install GitHub CLI (gh) for repo management (issues, PRs, etc.)
 # hadolint ignore=DL3008
@@ -100,20 +96,16 @@ RUN groupadd -g 1000 claude && \
     mkdir -p /project /home/claude/.config /etc/claude && \
     chown -R claude:claude /project /home/claude
 
-# Copy Godot binary from builder (after user creation for proper ownership)
-# This is version-dependent, so it changes when Godot version changes
-COPY --from=builder /opt/godot /opt/godot
-COPY --from=builder /usr/local/bin/godot /usr/local/bin/godot
-
 # Copy entrypoint script and set permissions in one layer
 # Scripts change more frequently, so they're copied later
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY scripts/setup-github-app.sh /opt/scripts/setup-github-app.sh
 COPY scripts/clone-repo.sh /opt/scripts/clone-repo.sh
 COPY scripts/verify-mcp.sh /opt/scripts/verify-mcp.sh
+COPY scripts/issue-worker.js /opt/scripts/issue-worker.js
 RUN chmod +x /usr/local/bin/entrypoint.sh \
     /opt/scripts/setup-github-app.sh /opt/scripts/clone-repo.sh \
-    /opt/scripts/verify-mcp.sh
+    /opt/scripts/verify-mcp.sh /opt/scripts/issue-worker.js
 
 # Copy config files last (they change most frequently)
 # This minimizes cache invalidation when only config changes
@@ -123,7 +115,6 @@ COPY config/sandbox-context.md /etc/claude/sandbox-context.md
 # Set environment variables (stable, rarely changes)
 ENV HOME=/home/claude
 ENV USER=claude
-ENV GODOT_PATH=/opt/godot/godot
 
 # Switch to non-root user
 USER claude
@@ -138,4 +129,4 @@ CMD ["bash"]
 
 # Health check - verify core tools are available
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD godot --headless --version || exit 1
+    CMD claude --version || exit 1

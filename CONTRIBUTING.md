@@ -1,6 +1,6 @@
-# Contributing to godot-agent
+# Contributing to Sapphire Bee
 
-Thank you for your interest in contributing to godot-agent! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Sapphire Bee! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -22,8 +22,8 @@ Before creating an issue, please:
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/your-username/godot-agent.git
-   cd godot-agent
+   git clone https://github.com/your-username/sapphire-bee.git
+   cd sapphire-bee
    ```
 
 2. **Create a Branch**
@@ -133,7 +133,7 @@ make down
 Understanding the structure helps you know where to make changes:
 
 ```
-godot-agent/
+sapphire-bee/
 ├── compose/          # Docker Compose files - modify for service changes
 ├── configs/          # Service configurations - modify for network/proxy changes
 ├── image/            # Container build - modify for tooling changes

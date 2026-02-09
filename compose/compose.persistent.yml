@@ -13,18 +13,15 @@ services:
     build:
       context: ../image
       dockerfile: Dockerfile
-      args:
-        - GODOT_VERSION=${GODOT_VERSION:-4.6}
-        - GODOT_RELEASE_TYPE=${GODOT_RELEASE_TYPE:-beta2}
-    image: claude-godot-agent:latest
+    image: sapphire-bee:latest
     container_name: agent
     stdin_open: true
     tty: true
-    
+
     # Keep container running - attach with docker exec
     command: ["tail", "-f", "/dev/null"]
     restart: unless-stopped
-    
+
     # Environment - authentication via API key OR Claude Max OAuth token
     # GitHub: App authentication (recommended) > PAT (legacy)
     environment:
@@ -40,14 +37,14 @@ services:
       - GITHUB_PAT=${GITHUB_PAT:-}
       - HOME=/home/claude
       - USER=claude
-    
+
     # Network: sandbox only, use dnsfilter for DNS
     networks:
       sandbox_net:
         ipv4_address: 10.100.1.100
     dns:
       - 10.100.1.2  # dnsfilter
-    
+
     # Direct mount: host project directory -> /project (RW)
     volumes:
       - ${PROJECT_PATH:-./../project}:/project:rw
@@ -57,12 +54,12 @@ services:
     read_only: true
     tmpfs:
       - /tmp:size=100M,mode=1777
-      - /home/claude:size=50M,mode=0755,uid=1000,gid=1000
+      - /home/claude:size=500M,mode=0755,uid=1000,gid=1000
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges:true
-    
+
     # Resource limits (can override via environment)
     deploy:
       resources:
@@ -72,7 +69,7 @@ services:
           pids: 256
         reservations:
           memory: 256M
-    
+
     # Depends on infrastructure services
     depends_on:
       dnsfilter:
@@ -81,12 +78,12 @@ services:
         condition: service_started
       proxy_anthropic_api:
         condition: service_started
-    
+
     # Working directory
     working_dir: /project
 
 networks:
   sandbox_net:
     external: true
-    name: claude-godot-sandbox_sandbox_net
+    name: sapphire-bee-sandbox_sandbox_net
 

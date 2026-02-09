@@ -8,20 +8,10 @@ on:
       - 'image/**'
       - 'configs/**'
       - '.github/workflows/build-and-push.yml'
-  
+
   # Allow manual trigger
   workflow_dispatch:
     inputs:
-      godot_version:
-        description: 'Godot version (e.g., 4.6, 4.5.1, 4.4)'
-        required: false
-        default: '4.6'
-        type: string
-      godot_release_type:
-        description: 'Release type (stable, beta1, beta2, rc1, dev1, etc.)'
-        required: false
-        default: 'beta2'
-        type: string
       push_latest:
         description: 'Also tag as latest'
         type: boolean
@@ -34,32 +24,29 @@ on:
 env:
   # Default registry (GitHub Container Registry)
   REGISTRY: ghcr.io
-  # Godot configuration
-  GODOT_VERSION: ${{ github.event.inputs.godot_version || '4.6' }}
-  GODOT_RELEASE_TYPE: ${{ github.event.inputs.godot_release_type || 'beta2' }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     environment: production
-    
+
     permissions:
       contents: read
       packages: write
-    
+
     outputs:
       image_name: ${{ steps.image.outputs.name }}
-    
+
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set image name (lowercase)
         id: image
-        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/claude-godot-agent" >> $GITHUB_OUTPUT
+        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/sapphire-bee" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         if: ${{ !env.ACT }}
@@ -100,8 +87,6 @@ jobs:
           images: |
             ${{ env.REGISTRY }}/${{ steps.image.outputs.name }}
           tags: |
-            # Tag with full Godot version (e.g., godot-4.6-beta2)
-            type=raw,value=godot-${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE_TYPE }}
             # Tag with Claude Code version
             type=raw,value=claude-${{ steps.claude.outputs.version }}
             # Tag with git SHA
@@ -121,18 +106,13 @@ jobs:
           load: ${{ env.ACT && true || false }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            GODOT_VERSION=${{ env.GODOT_VERSION }}
-            GODOT_RELEASE_TYPE=${{ env.GODOT_RELEASE_TYPE }}
-            # Note: SHA256 checksums are architecture-specific, can't use single value for multi-arch
-            # The fetch script will skip verification and print the checksum for reference
           cache-from: ${{ github.event.inputs.no_cache == 'true' && '' || 'type=gha' }}
           cache-to: type=gha,mode=max
           no-cache: ${{ github.event.inputs.no_cache == 'true' }}
 
       - name: Generate build summary
         run: |
-          echo "## 🐳 Docker Image Built" >> $GITHUB_STEP_SUMMARY
+          echo "## Docker Image Built" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Registry:** \`${{ env.REGISTRY }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** \`${{ steps.image.outputs.name }}\`" >> $GITHUB_STEP_SUMMARY
@@ -151,15 +131,15 @@ jobs:
   verify:
     needs: build-and-push
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: read
       packages: read
-    
+
     steps:
       - name: Set image name (lowercase)
         id: image
-        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/claude-godot-agent" >> $GITHUB_OUTPUT
+        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/sapphire-bee" >> $GITHUB_OUTPUT
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -171,11 +151,11 @@ jobs:
       - name: Pull and test image
         run: |
           docker pull ghcr.io/${{ steps.image.outputs.name }}:latest
-          
-          echo "Testing Godot..."
+
+          echo "Testing Claude Code..."
           docker run --rm ghcr.io/${{ steps.image.outputs.name }}:latest \
-            godot --headless --version || echo "Godot test skipped (may need sha256)"
-          
+            claude --version || echo "Claude test skipped"
+
           echo "Testing basic container..."
           docker run --rm ghcr.io/${{ steps.image.outputs.name }}:latest \
             bash -c "echo 'Container works!' && whoami && pwd"

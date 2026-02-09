@@ -1,6 +1,6 @@
-# GitHub App Setup for Godot Agent
+# GitHub App Setup for Sapphire Bee
 
-This guide explains how to set up GitHub App authentication for the Claude-Godot sandbox. GitHub Apps provide **short-lived tokens** with fine-grained permissions, offering better security than Personal Access Tokens (PATs).
+This guide explains how to set up GitHub App authentication for the Sapphire Bee sandbox. GitHub Apps provide **short-lived tokens** with fine-grained permissions, offering better security than Personal Access Tokens (PATs).
 
 ## Why GitHub App Instead of PAT?
 
@@ -38,7 +38,7 @@ make up-agent PROJECT=/path/to/your/project
    - URL: https://github.com/settings/apps/new
 
 2. Fill in the basic information:
-   - **GitHub App name**: `claude-godot-agent` (or your preferred name)
+   - **GitHub App name**: `sapphire-bee` (or your preferred name)
    - **Homepage URL**: Your repository URL
    - **Webhook**: Uncheck "Active" (we don't need webhooks)
 
@@ -130,7 +130,7 @@ Limit the token to specific repos:
 
 ```bash
 # .env file
-GITHUB_APP_REPOSITORIES=my-godot-game,game-assets
+GITHUB_APP_REPOSITORIES=my-project,project-assets
 ```
 
 ## Step 5: Test the Configuration
@@ -161,7 +161,7 @@ Expected output:
 ============================================================
 
   ✅ App authenticated successfully!
-  ℹ️  App Name: claude-godot-agent
+  ℹ️  App Name: sapphire-bee
   ℹ️  Configured permissions:
       - contents: read
       - issues: write
@@ -182,9 +182,9 @@ Expected output:
 
   ✅ API access working! Found 3 accessible repositories.
   ℹ️  Accessible repositories:
-      📂 my-org/godot-game
-      🔒 my-org/game-assets
-      📂 my-org/game-tools
+      📂 my-org/my-project
+      🔒 my-org/project-assets
+      📂 my-org/project-tools
 
 ============================================================
   Summary
@@ -333,7 +333,7 @@ make up-agent PROJECT=/path/to/project
    - Check Security → Code security and analysis for audit logs
    - API calls show as your GitHub App, not your personal account
 
-## Comparison: GitHub App vs PAT for Godot Agent
+## Comparison: GitHub App vs PAT for Sapphire Bee
 
 | Scenario | Recommendation |
 |----------|----------------|
